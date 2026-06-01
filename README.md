@@ -29,7 +29,7 @@
   <img src="assets/teaser.jpg" width="600" alt="FlowSR teaser">
 </p>
 
-> Welcome to the **FlowSR** project page, where we share the paper, method, and results. Since an official code release is not possible under the company's open-source policy, we point instead to a community-maintained, inference-only reproduction below.
+> Welcome to the **FlowSR** project page, where we share the paper, method, and results. Since an official code release is not currently possible under the company's open-source policy, we point instead to a community-maintained, inference-only reproduction below.
 >
 > &nbsp;&nbsp;▸ &nbsp;**Unofficial inference code:** [github.com/springXIACJ/FlowSR](https://github.com/springXIACJ/FlowSR)
 > &nbsp;&nbsp;▸ &nbsp;**Pretrained weights:** [huggingface.co/chunjie-spring/FlowSR](https://huggingface.co/chunjie-spring/FlowSR)
@@ -40,7 +40,7 @@
 
 FlowSR restores a high-resolution image from a degraded low-resolution input in **a single network evaluation** — roughly **0.14 s** for a 4× upscale — while staying competitive with or ahead of multi-step diffusion methods.
 
-- **Flow, not noise.** SR is cast as a *rectified flow* that travels straight from the LR image to the HR image, so sampling starts from the LR content instead of corrupting it with noise.
+- **LR → HR flow, not noise.** SR is cast as a *rectified flow* that travels straight from the LR image to the HR image, so sampling starts from the LR content instead of corrupting it with noise.
 - **Consistency that respects the ground truth.** An *HR-regularized* consistency objective keeps the distilled one-step prediction anchored to the real HR target, not just to a (possibly drifting) teacher.
 - **A scheduler that has it both ways.** A *fast–slow* time schedule pairs coarse, efficiency-oriented jumps with fine-grained steps that preserve texture.
 - **Lean.** 982 M parameters — the smallest among one-step Stable-Diffusion-based SR models in our comparison.
@@ -49,18 +49,16 @@ FlowSR restores a high-resolution image from a degraded low-resolution input in 
 
 ## How it works
 
-FlowSR uses a Stable Diffusion 2.1 backbone and trains in two stages: SR-flow pre-training, then consistency SR-flow distillation.
+FlowSR builds on a Stable Diffusion 2.1 backbone and trains in two stages: SR-flow pre-training, then consistency SR-flow distillation.
 
 <p align="center">
   <img src="assets/overview.jpg" width="780" alt="Training overview">
 </p>
 
 **Rectified SR flow.**
-We interpolate linearly between HR and LR, `X_t = (1 − t)·X_HR + t·X_LR`, and train a velocity field `v_θ` to follow the straight direction `X_LR − X_HR`. Inference reverses the ODE from the LR image with an Euler solver, supporting anywhere from many steps down to one:
+We interpolate linearly between HR and LR, $X_t = (1 - t)\,X_{HR} + t\,X_{LR}$, and train a velocity field $v_\theta$ to follow the straight direction $X_{LR} - X_{HR}$. Inference reverses the ODE from the LR image with an Euler solver, supporting anywhere from many steps down to one:
 
-```
-X̂_HR  =  X_LR  −  v_θ(X_LR, 1)
-```
+$$\hat{X}_{HR} = X_{LR} - v_\theta(X_{LR},\, 1)$$
 
 Because the path begins at the LR image rather than at noise, structural information is preserved and sampling is stable and fast.
 
@@ -102,7 +100,7 @@ Stage 1 minimizes an image-space flow loss (ℓ₂ + LPIPS). Stage 2 adds the HR
 
 </div>
 
-<sub>Full comparison incl. DiffBIR / PASD is in the paper. PSNR/SSIM on the Y channel (YCbCr). Eval sets: <a href="https://huggingface.co/datasets/Iceclear/StableSR-TestSets">Iceclear/StableSR-TestSets</a>.</sub>
+<sub>Full comparison incl. DiffBIR / PASD is in the [paper](https://arxiv.org/abs/2605.12377). PSNR/SSIM on the Y channel (YCbCr). Eval sets: <a href="https://huggingface.co/datasets/Iceclear/StableSR-TestSets">Iceclear/StableSR-TestSets</a>.</sub>
 
 **Efficiency** — one forward pass, no iterative sampling (4× SR from a 128×128 LR input):
 
