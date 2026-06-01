@@ -45,3 +45,6 @@ checkpoints/
 # Environment
 .env
 .env.local
+
+# Claude Code local guidance (keep local, do not publish)
+CLAUDE.md
