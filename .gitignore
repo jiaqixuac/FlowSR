@@ -1,0 +1,47 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Editor / IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Python (in case inference/training code is added later)
+__pycache__/
+*.py[cod]
+*$py.class
+.Python
+build/
+dist/
+*.egg-info/
+.eggs/
+.venv/
+venv/
+env/
+.ipynb_checkpoints/
+
+# ML artifacts / large files
+*.ckpt
+*.pt
+*.pth
+*.safetensors
+*.bin
+*.onnx
+wandb/
+logs/
+outputs/
+checkpoints/
+
+# Environment
+.env
+.env.local
